@@ -13,19 +13,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Generate keys
+      - name: Generate five encoded keys
         run: |
-          echo "[]" > newkeys.json
+          echo '{ "keys": [] }' > keys.json
           for i in 1 2 3 4 5
           do
             RAW="Free_phonghub$RANDOM$RANDOM"
             ENC=$(echo -n "$RAW" | base64)
-            jq --arg k "$ENC" '. += [$k]' newkeys.json > temp.json
-            mv temp.json newkeys.json
+            jq --arg k "$ENC" '.keys += [$k]' keys.json > temp.json
+            mv temp.json keys.json
           done
-          echo $(jq '{keys:.}' newkeys.json) > keys.json
 
-      - name: Commit update
+      - name: Commit
         run: |
           git config user.name "Auto Key Bot"
           git config user.email "bot@github"
